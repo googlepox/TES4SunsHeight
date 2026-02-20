@@ -5,8 +5,6 @@ VisualStudioVersion = 17.12.35209.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "..\common\common.vcxproj", "{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "obse", "..\OBSE\obse\obse\obse.vcxproj", "{01B76B21-F851-436E-ACEA-64FA03BE8C59}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunsHeight", "SunsHeight.vcxproj", "{89C5334F-0397-4543-9826-29BC8A7AF03C}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Debug|x86.Build.0 = Debug|Win32
 		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Release|x86.ActiveCfg = Release|Win32
 		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Release|x86.Build.0 = Release|Win32
-		{01B76B21-F851-436E-ACEA-64FA03BE8C59}.Debug|x86.ActiveCfg = Debug 1_2_0_416|Win32
-		{01B76B21-F851-436E-ACEA-64FA03BE8C59}.Debug|x86.Build.0 = Debug 1_2_0_416|Win32
-		{01B76B21-F851-436E-ACEA-64FA03BE8C59}.Release|x86.ActiveCfg = Release 1_2_0_416|Win32
-		{01B76B21-F851-436E-ACEA-64FA03BE8C59}.Release|x86.Build.0 = Release 1_2_0_416|Win32
 		{89C5334F-0397-4543-9826-29BC8A7AF03C}.Debug|x86.ActiveCfg = Debug|Win32
 		{89C5334F-0397-4543-9826-29BC8A7AF03C}.Debug|x86.Build.0 = Debug|Win32
 		{89C5334F-0397-4543-9826-29BC8A7AF03C}.Release|x86.ActiveCfg = Release|Win32

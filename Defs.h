@@ -17,5 +17,4 @@
 #include "GameData.h"
 #include "GameProcess.h"
 #include "GameExtraData.h"
-#include "CommandTable.h"
 #include "Utilities.h"

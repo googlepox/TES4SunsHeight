@@ -3,13 +3,13 @@
 #include "common/IDebugLog.h"
 #include <Hooks.h>
 #include <Manager.h>
+#include "EditorIDMapper/EditorIDMapperAPI.h"
 
 IDebugLog		gLog("Sun's Height.log");
 PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 
 OBSEMessagingInterface* g_messagingInterface{};
 OBSEInterface* g_OBSEInterface{};
-OBSECommandTableInterface* g_cmdTableInterface{};
 
 // OBLIVION = Is not being compiled as a CS plugin.
 #if OBLIVION
@@ -23,7 +23,6 @@ OBSEEventManagerInterface* g_eventInterface{};
 
 static void SunsHeight_SaveCallback(void* reserved)
 {
-	_MESSAGE("Saving Sun's Height data...");
 	g_serializationInterface->OpenRecord(SunsHeight::kSerializationSignature, 1);
 	g_serializationInterface->WriteRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.bodyTemp), sizeof(SunsHeight::Manager::GetSingleton()->tempData.bodyTemp));
 	g_serializationInterface->WriteRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.wetness), sizeof(SunsHeight::Manager::GetSingleton()->tempData.wetness));
@@ -31,7 +30,6 @@ static void SunsHeight_SaveCallback(void* reserved)
 	g_serializationInterface->WriteRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.lastHeatLevel), sizeof(SunsHeight::Manager::GetSingleton()->tempData.lastHeatLevel));
 	g_serializationInterface->WriteRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.lastColdLevel), sizeof(SunsHeight::Manager::GetSingleton()->tempData.lastColdLevel));
 	g_serializationInterface->WriteRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.lastWetLevel), sizeof(SunsHeight::Manager::GetSingleton()->tempData.lastWetLevel));
-	_MESSAGE("Sun's Height data saved sucessfully");
 }
 
 static void SunsHeight_LoadCallback(void* reserved)
@@ -44,17 +42,12 @@ static void SunsHeight_LoadCallback(void* reserved)
 		switch (type)
 		{
 		case 'SUNH':
-			_MESSAGE("Loading Sun's Height data...");
 			g_serializationInterface->ReadRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.bodyTemp), sizeof(SunsHeight::Manager::GetSingleton()->tempData.bodyTemp));
 			g_serializationInterface->ReadRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.wetness), sizeof(SunsHeight::Manager::GetSingleton()->tempData.wetness));
 			g_serializationInterface->ReadRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.lastGameHour), sizeof(SunsHeight::Manager::GetSingleton()->tempData.lastGameHour));
 			g_serializationInterface->ReadRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.lastHeatLevel), sizeof(SunsHeight::Manager::GetSingleton()->tempData.lastHeatLevel));
 			g_serializationInterface->ReadRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.lastColdLevel), sizeof(SunsHeight::Manager::GetSingleton()->tempData.lastColdLevel));
 			g_serializationInterface->ReadRecordData(&(SunsHeight::Manager::GetSingleton()->tempData.lastWetLevel), sizeof(SunsHeight::Manager::GetSingleton()->tempData.lastWetLevel));
-			_MESSAGE("Sun's Height data loaded sucessfully");
-			_MESSAGE("Loaded SunsHeight save: temp=%f wet=%f",
-				SunsHeight::Manager::GetSingleton()->tempData.bodyTemp,
-				SunsHeight::Manager::GetSingleton()->tempData.wetness);
 			break;
 		default:
 			break;
@@ -63,13 +56,18 @@ static void SunsHeight_LoadCallback(void* reserved)
 	
 }
 
+void UnifiedMessageHandler(OBSEMessagingInterface::Message* msg)
+{
+	EditorIDMapper::MessageHandler(msg);
+}
+
 void MessageHandler(OBSEMessagingInterface::Message* msg)
 {
 	switch (msg->type)
 	{
-	case OBSEMessagingInterface::kMessage_LoadGame: {
+	case OBSEMessagingInterface::kMessage_GameInitialized:
+	{
 		SunsHeight::Manager::GetSingleton()->Initialize();
-		
 	} break;
 	default: break;
 	}
@@ -145,6 +143,8 @@ bool OBSEPlugin_Load(OBSEInterface* OBSE)
 		SunsHeight::Manager::GetSingleton()->realTimeMenusLoaded = true;
 	}
 
+	g_messagingInterface->RegisterListener(g_pluginHandle, nullptr, UnifiedMessageHandler);
+	EditorIDMapper::Init(g_messagingInterface, g_pluginHandle);
 	SunsHeight::Install();
 
 	return true;

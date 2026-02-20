@@ -1,6 +1,7 @@
 #include "Manager.h"
 #include <GameAPI.h>
 #include <ModTable.h>
+#include "EditorIDMapper/EditorIDMapperAPI.h"
 
 namespace SunsHeight
 {
@@ -12,6 +13,8 @@ namespace SunsHeight
     static TESGlobal* g_fireHeatGlobal = nullptr;
     static TESGlobal* g_nearFireGlobal = nullptr;
     static TESGlobal* g_showBarsGlobal = nullptr;
+
+    static bool g_isInitialized = false;
 
     float WET_GAIN_RAIN = 4.0f;
     float WET_GAIN_SNOW = 2.0f;
@@ -411,61 +414,72 @@ namespace SunsHeight
         }
     }
 
+    static bool StrContainsCI(const char* str, const char* substr)
+    {
+        if (!str || !substr)
+            return false;
+
+        size_t len = strlen(substr);
+        while (*str)
+        {
+            if (_strnicmp(str, substr, len) == 0)
+                return true;
+            str++;
+        }
+        return false;
+    }
+
     std::vector<TESObjectREFR*> Manager::DetectNearbyFire()
     {
         std::vector<TESObjectREFR*> fires;
-
         if (!g_thePlayer || !(*g_thePlayer))
             return fires;
 
         PlayerCharacter* player = *g_thePlayer;
-        float playerPosX = player->posX;
-        float playerPosY = player->posY;
+        if (!player->parentCell)
+            return fires;
+
+        const float playerPosX = player->posX;
+        const float playerPosY = player->posY;
         const float MAX_FIRE_DIST_SQ = MAX_FIRE_DIST * MAX_FIRE_DIST;
 
-        auto& refList = player->parentCell->objectList;
-        CellListVisitor visitor = (&refList);
+        fires.reserve(16);
 
-        for (int i = 0; i < visitor.Count(); ++i)
+        auto& refList = player->parentCell->objectList;
+        CellListVisitor visitor(&refList);
+        const int count = visitor.Count();
+
+        for (int i = 0; i < count; ++i)
         {
             TESObjectREFR* ref = visitor.GetNthInfo(i);
-            if (!ref)
+            if (!ref || !ref->baseForm)
                 continue;
 
             TESForm* base = ref->baseForm;
-            if (!base)
-                continue;
-
-            if (base->typeID != kFormType_Light &&
-                base->typeID != kFormType_Activator &&
-                base->typeID != kFormType_Stat)
-                continue;
-
-            // Only include objects with fire/flame/lava in editor ID
-            try
-            {
-                std::string editorID = base->GetEditorName();
-                std::transform(editorID.begin(), editorID.end(), editorID.begin(), ::tolower);
-                if (editorID.find("fire") == std::string::npos &&
-                    editorID.find("flame") == std::string::npos &&
-                    editorID.find("lava") == std::string::npos)
-                {
-                    continue;
-                }
-            }
-            catch (const std::exception&)
-            {
-                
-            }
 
             float diffX = ref->posX - playerPosX;
             float diffY = ref->posY - playerPosY;
             float distSq = diffX * diffX + diffY * diffY;
-
             if (distSq > MAX_FIRE_DIST_SQ)
                 continue;
 
-            fires.push_back(ref);
+            UInt8 typeID = base->typeID;
+            if (typeID != kFormType_Light &&
+                typeID != kFormType_Activator &&
+                typeID != kFormType_WaterForm &&
+                typeID != kFormType_Stat)
+                continue;
+
+            const char* editorName = EditorIDMapper::ReverseLookup(base->refID);
+            if (!editorName)
+                continue;
+
+            if (StrContainsCI(editorName, "fire") ||
+                StrContainsCI(editorName, "flame") ||
+                StrContainsCI(editorName, "lava"))
+            {
+                fires.push_back(ref);
+            }
         }
 
         return fires;
@@ -527,7 +541,7 @@ namespace SunsHeight
                 TESRegionList* regions = regionList->regionList;
                 TESRegionList::Entry* regionPtr = &(regions->regionList);
 
-                while (regionPtr != NULL)
+                while (regionPtr && regionPtr->region)
                 {
                     UInt32 regionID = regionPtr->region->refID;
 
@@ -573,6 +587,7 @@ namespace SunsHeight
 
             if (weather)
             {
+
                 tempData.weatherID = weather->refID;
 
                 auto it = g_weatherOverrides.find(weather->refID);
@@ -897,9 +912,8 @@ namespace SunsHeight
         TESObjectCELL* currentCell = player->parentCell;
         if (!currentCell) return;
 
-        float now = TimeGlobals::Singleton()->GameHour() * 3600.0f; // seconds
+        float now = TimeGlobals::Singleton()->GameHour() * 3600.0f;
 
-        // Rescan fires only on cell change or every 5 seconds
         if (currentCell != cell || now - lastFireScanTime > 5.0f)
         {
             if (DEBUG_MODE)
@@ -910,7 +924,6 @@ namespace SunsHeight
             lastFireScanTime = now;
         }
 
-        // Compute fire heat from cached fires every tick
         tempData.fireHeat = 0.0f;
         tempData.nearFire = !cachedFires.empty();
         for (TESObjectREFR* ref : cachedFires)
@@ -1180,12 +1193,16 @@ namespace SunsHeight
 
     void Manager::Initialize()
     {
-        LoadConfig();
-        ResolveWeatherOverrides();
-        ResolveRegionOverrides();
-        ResolveWorldspaceOverrides();
-        ResolveTierSpells();
-        ResolveGlobals();
-        _MESSAGE("Sun's Height initialized");
+        if (!g_isInitialized)
+        {
+            LoadConfig();
+            ResolveWeatherOverrides();
+            ResolveRegionOverrides();
+            ResolveWorldspaceOverrides();
+            ResolveTierSpells();
+            ResolveGlobals();
+            g_isInitialized = true;
+            _MESSAGE("Sun's Height initialized");
+        }
     }
 }

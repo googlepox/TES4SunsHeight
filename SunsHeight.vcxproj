@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\EditorIDMapper\EditorIDMapperAPI.h" />
     <ClInclude Include="Defs.h" />
     <ClInclude Include="Hooks.h" />
     <ClInclude Include="TemperatureData.h" />
@@ -29,13 +30,10 @@
     <ProjectReference Include="..\common\common.vcxproj">
       <Project>{20c6411c-596f-4b85-be4e-8bc91f59d8a6}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\OBSE\obse\obse\obse.vcxproj">
-      <Project>{01b76b21-f851-436e-acea-64fa03be8c59}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{89C5334F-0397-4543-9826-29BC8A7AF03C}</ProjectGuid>
-    <RootNamespace>obse_plugin_example</RootNamespace>
+    <RootNamespace>SunsHeight</RootNamespace>
     <SccProjectName>
     </SccProjectName>
     <SccLocalPath>
@@ -84,7 +82,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)..;$(SolutionDir)..\obse\obse\obse_common;$(SolutionDir)..\obse\obse\obse;$(SolutionDir)..\obse\obse;$(SolutionDir)..\obse\common;$(SolutionDir)..\TESReloaded10\;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)..;$(SolutionDir)..\xobse\obse\obse_common;$(SolutionDir)..\xobse\obse\obse;$(SolutionDir)..\xobse\obse;$(SolutionDir)..\xobse\common;$(SolutionDir)..\TESReloaded10\;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OBLIVION_VERSION=0x010201A0;OBLIVION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -102,11 +100,13 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\xobse\obse\obse\Debug 1_2_0_416;$(SolutionDir)..\xobse\obse\obse\Release 1_2_0_416</AdditionalLibraryDirectories>
+      <AdditionalDependencies>obse.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;$(SolutionDir)\..\obse\obse;$(SolutionDir)\..\obse\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)..;$(SolutionDir)..\xobse\obse\obse_common;$(SolutionDir)..\xobse\obse\obse;$(SolutionDir)..\xobse\obse;$(SolutionDir)..\xobse\common;$(SolutionDir)..\TESReloaded10\;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OBLIVION_VERSION=0x010201A0;OBLIVION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader />
@@ -123,6 +123,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\xobse\obse\obse\Release 1_2_0_416</AdditionalLibraryDirectories>
+      <AdditionalDependencies>obse.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

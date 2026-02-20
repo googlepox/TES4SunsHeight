@@ -7,12 +7,28 @@
     <ClCompile Include="Manager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Defs.h" />
-    <ClInclude Include="Hooks.h" />
-    <ClInclude Include="TemperatureData.h" />
-    <ClInclude Include="Manager.h" />
+    <ClInclude Include="Defs.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="TemperatureData.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EditorIDMapper\EditorIDMapperAPI.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{968b8b44-053f-409c-a864-735cccbcb6d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
