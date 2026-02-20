@@ -470,7 +470,9 @@ namespace SunsHeight
                 typeID != kFormType_Stat)
                 continue;
 
-            const char* editorName = EditorIDMapper::ReverseLookup(base->refID);
+            //const char* editorName = EditorIDMapper::ReverseLookup(base->refID);
+            const char* editorName = base->GetEditorName();
+            _MESSAGE("editorID is %s", editorName);
             if (!editorName)
                 continue;
 
