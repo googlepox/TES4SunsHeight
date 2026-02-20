@@ -472,7 +472,6 @@ namespace SunsHeight
 
             //const char* editorName = EditorIDMapper::ReverseLookup(base->refID);
             const char* editorName = base->GetEditorName();
-            _MESSAGE("editorID is %s", editorName);
             if (!editorName)
                 continue;
 
